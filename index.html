@@ -95,15 +95,18 @@ footer { padding: 2.5rem 0 6rem; text-align: center; color: var(--ink-soft); fon
 }
 /* ---------- Booking / ordering preview ---------- */
 dialog.flow { border: 0; padding: 0; width: min(560px, 100% - 1.5rem); max-height: min(820px, 100dvh - 1.5rem); border-radius: 22px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 64px rgba(0,0,0,.28); }
+dialog.flow[open] { display: flex; flex-direction: column; }
 dialog.flow::backdrop { background: rgba(20, 16, 18, .55); }
 .flow-head { display: flex; justify-content: space-between; align-items: center; padding: 1.1rem 1.3rem; border-bottom: 1px solid var(--line); }
 .flow-head h3 { margin: 0; font-size: 1.35rem; }
 .flow-close { border: 0; background: transparent; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--ink-soft); }
 .flow-note { margin: 0; background: #fff4d6; color: #5a3f00; font-size: .84rem; font-weight: 600; text-align: center; padding: .45rem 1rem; }
-.flow-body { padding: 1.2rem 1.3rem 1.4rem; overflow: auto; }
+.flow-body { padding: 1.2rem 1.3rem 1.4rem; overflow: auto; flex: 1; min-height: 0; }
 .flow-step-label { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: .8rem; }
 .opt { display: flex; width: 100%; justify-content: space-between; gap: 1rem; align-items: center; text-align: left; font: inherit; background: var(--bg); color: var(--ink); border: 2px solid var(--line); border-radius: 14px; padding: .8rem 1rem; margin-bottom: .6rem; cursor: pointer; }
 .opt:hover, .opt[aria-pressed="true"] { border-color: var(--accent); }
+.flow-group { margin: 1rem 0 .5rem; font-family: var(--display); font-size: 1.1rem; color: var(--accent); }
+.flow-group:first-of-type { margin-top: 0; }
 .opt small { display: block; color: var(--ink-soft); }
 .qty { display: inline-flex; align-items: center; gap: .5rem; }
 .qty button { width: 2rem; height: 2rem; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); font: inherit; font-weight: 700; cursor: pointer; color: var(--ink); }
@@ -260,6 +263,7 @@ function slotsFor(day) {
   // Demo only: mark some times as taken so it looks real (same every time)
   return out.slice(0, 18).map((t, i) => ({ t, taken: KIND === "book" && (i * 7 + day.date.getDate()) % 5 === 0 }));
 }
+function cartTotal() { return Object.entries(st.cart).reduce((t, [i, q]) => t + q * parseFloat(ITEMS[i].price.replace(/[^0-9.]/g, "")), 0); }
 function cartCount() { return Object.values(st.cart).reduce((a, b) => a + b, 0); }
 
 function render() {
@@ -267,15 +271,16 @@ function render() {
   next.style.display = st.step === 3 ? "none" : "";
   if (st.step === 0) {
     body.innerHTML = `<div class="flow-step-label">${KIND === "book" ? "1 · Choose a service" : "1 · Choose what you'd like"}</div>` +
-      ITEMS.map((it, i) => KIND === "book"
+      ITEMS.map((it, i) => (it.group && it.group !== (ITEMS[i - 1] || {}).group ? `<h4 class="flow-group">${it.group}</h4>` : "") + (KIND === "book"
         ? `<button class="opt" data-i="${i}" aria-pressed="${st.item === i}"><span><strong>${it.name}</strong><small>${it.detail}</small></span><span class="price">${it.price}</span></button>`
-        : `<div class="opt" style="cursor:default"><span><strong>${it.name}</strong><small>${it.detail} · ${it.price}</small></span><span class="qty"><button data-dec="${i}" aria-label="Remove one">−</button><span>${st.cart[i] || 0}</span><button data-inc="${i}" aria-label="Add one">+</button></span></div>`
+        : `<div class="opt" style="cursor:default"><span><strong>${it.name}</strong><small>${it.detail} · ${it.price}</small></span><span class="qty"><button data-dec="${i}" aria-label="Remove one">−</button><span>${st.cart[i] || 0}</span><button data-inc="${i}" aria-label="Add one">+</button></span></div>`)
       ).join("");
     body.querySelectorAll("[data-i]").forEach(b => b.onclick = () => { st.item = +b.dataset.i; render(); });
-    body.querySelectorAll("[data-inc]").forEach(b => b.onclick = () => { st.cart[b.dataset.inc] = (st.cart[b.dataset.inc] || 0) + 1; render(); });
-    body.querySelectorAll("[data-dec]").forEach(b => b.onclick = () => { st.cart[b.dataset.dec] = Math.max(0, (st.cart[b.dataset.dec] || 0) - 1); render(); });
+    const keep = fn => () => { const y = body.scrollTop; fn(); render(); body.scrollTop = y; };
+    body.querySelectorAll("[data-inc]").forEach(b => b.onclick = keep(() => { st.cart[b.dataset.inc] = (st.cart[b.dataset.inc] || 0) + 1; }));
+    body.querySelectorAll("[data-dec]").forEach(b => b.onclick = keep(() => { st.cart[b.dataset.dec] = Math.max(0, (st.cart[b.dataset.dec] || 0) - 1); }));
     next.disabled = KIND === "book" ? st.item === null : cartCount() === 0;
-    next.textContent = "Next";
+    next.textContent = KIND === "order" && cartCount() ? `Next · ${cartCount()} item${cartCount() > 1 ? "s" : ""} · $${cartTotal().toFixed(2)}` : "Next";
   } else if (st.step === 1) {
     const days = upcomingDays();
     if (st.day === null) st.day = days.findIndex(d => d.open);

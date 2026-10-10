@@ -42,6 +42,18 @@ nav.links a:hover { color: var(--accent); }
 .hero::before { width: 520px; height: 520px; right: -160px; top: -140px; background: radial-gradient(circle at 30% 30%, var(--deco1), transparent 68%); }
 .hero::after { width: 380px; height: 380px; left: -140px; bottom: -180px; background: radial-gradient(circle at 60% 40%, var(--deco2), transparent 70%); }
 .hero .wrap { position: relative; z-index: 1; }
+.hero-grid { display: grid; gap: 2.2rem; align-items: center; }
+.hero-photo, .strip-photo { position: relative; margin: 0; border-radius: 24px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,.14); }
+.hero-photo img, .strip-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.hero-photo { aspect-ratio: 4 / 3; }
+.hero-photo:hover img, .strip-photo:hover img { transform: scale(1.04); }
+.photo-tag { position: absolute; left: .7rem; bottom: .7rem; font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: rgba(255,244,214,.92); color: #5a3f00; border: 1px dashed #e2b44a; border-radius: 6px; padding: .12rem .45rem; }
+.photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding-top: clamp(2.5rem, 7vw, 3.5rem); }
+.strip-photo { aspect-ratio: 4 / 3; }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .hero-photo img, .strip-photo img { transition: none; } }
+@media (max-width: 540px) { .photo-strip { grid-template-columns: 1fr; } }
 .eyebrow { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
 .hero h1 { font-size: clamp(2.6rem, 10vw, 4.6rem); max-width: 14ch; letter-spacing: -.01em; }
 .tagline { font-size: clamp(1.1rem, 4vw, 1.35rem); color: var(--ink-soft); max-width: 36ch; margin: 0 0 1.8rem; }
@@ -90,6 +102,8 @@ footer { padding: 2.5rem 0 6rem; text-align: center; color: var(--ink-soft); fon
 @media (min-width: 820px) {
   nav.links { display: flex; }
   header.top .btn { display: inline-flex; }
+  .hero-grid.has-photo { grid-template-columns: 1.05fr .95fr; }
+  .hero-photo { transform: rotate(1.5deg); }
   .sticky-cta { display: none; }
   footer { padding-bottom: 2.5rem; }
 }
@@ -142,7 +156,8 @@ dialog.flow::backdrop { background: rgba(20, 16, 18, .55); }
 
 <main id="top">
   <section class="hero">
-    <div class="wrap">
+    <div class="wrap hero-grid has-photo">
+      <div>
       <span class="eyebrow">Nail Salon · Grover Beach</span>
       <h1>Beautiful nails, right on Grand Ave</h1>
       <p class="tagline">Manicures, pedicures, dip and gel from a friendly team that makes time for you. Book online in seconds, any time of day.</p>
@@ -151,20 +166,24 @@ dialog.flow::backdrop { background: rgba(20, 16, 18, .55); }
         <a class="btn ghost" href="tel:+18052704072">Call (805) 270-4072</a>
       </div>
       <span class="rating-pill"><span class="st">★★★★½</span>4.5 on Google · 150 reviews</span>
+      </div>
+      <figure class="hero-photo"><img src="images/photo-1.jpg" alt="Soft pink manicure with flower petals" fetchpriority="high"><span class="photo-tag">Example photo</span></figure>
     </div>
   </section>
 
   <div class="wrap highlights">
-    <div class="hl"><div class="ic" aria-hidden="true">💅</div><strong>Mani &amp; pedi</strong><span>Gel, dip, acrylic and nail art.</span></div><div class="hl"><div class="ic" aria-hidden="true">⏱️</div><strong>Quick, friendly service</strong><span>In and out on your schedule.</span></div><div class="hl"><div class="ic" aria-hidden="true">📅</div><strong>Book online 24/7</strong><span>Pick your service and time, and get a text reminder.</span></div>
+    <div class="hl reveal"><div class="ic" aria-hidden="true">💅</div><strong>Mani &amp; pedi</strong><span>Gel, dip, acrylic and nail art.</span></div><div class="hl reveal"><div class="ic" aria-hidden="true">⏱️</div><strong>Quick, friendly service</strong><span>In and out on your schedule.</span></div><div class="hl reveal"><div class="ic" aria-hidden="true">📅</div><strong>Book online 24/7</strong><span>Pick your service and time, and get a text reminder.</span></div>
   </div>
+
+  <div class="wrap photo-strip"><figure class="strip-photo reveal"><img src="images/photo-2.jpg" alt="Rows of nail polish colors" loading="lazy"><span class="photo-tag">Example photo</span></figure><figure class="strip-photo reveal"><img src="images/photo-3.jpg" alt="A manicure in progress" loading="lazy"><span class="photo-tag">Example photo</span></figure></div>
 
   <section id="menu">
     <div class="wrap">
       <h2>Services</h2>
       <p class="section-intro">Our most popular services. We&#x27;ll put in your real menu and prices together.</p>
-      <div class="menu"><div class="menu-group"><h3>Manicures <span class="tag">Example</span></h3><ul><li><div><strong>Classic Manicure</strong><span class="desc">Shape, cuticle care, polish</span></div><span class="price">$25</span></li><li><div><strong>Gel Manicure</strong><span class="desc">Long-lasting shine, no chips</span></div><span class="price">$40</span></li><li><div><strong>Dip Powder</strong><span class="desc">Strong, natural-looking finish</span></div><span class="price">$45</span></li></ul></div>
-<div class="menu-group"><h3>Pedicures <span class="tag">Example</span></h3><ul><li><div><strong>Classic Pedicure</strong><span class="desc">Soak, scrub, massage, polish</span></div><span class="price">$35</span></li><li><div><strong>Gel Pedicure</strong><span class="desc">Classic pedicure with gel polish</span></div><span class="price">$50</span></li><li><div><strong>Deluxe Spa Pedicure</strong><span class="desc">Extra massage, mask and hot towels</span></div><span class="price">$60</span></li></ul></div>
-<div class="menu-group"><h3>Enhancements <span class="tag">Example</span></h3><ul><li><div><strong>Full Set Acrylic</strong><span class="desc">Any shape and length</span></div><span class="price">$55</span></li><li><div><strong>Fill</strong><span class="desc">Keep your set looking fresh</span></div><span class="price">$40</span></li><li><div><strong>Nail Art</strong><span class="desc">Designs, chrome, gems</span></div><span class="price">from $5</span></li></ul></div></div>
+      <div class="menu"><div class="menu-group reveal"><h3>Manicures <span class="tag">Example</span></h3><ul><li><div><strong>Classic Manicure</strong><span class="desc">Shape, cuticle care, polish</span></div><span class="price">$25</span></li><li><div><strong>Gel Manicure</strong><span class="desc">Long-lasting shine, no chips</span></div><span class="price">$40</span></li><li><div><strong>Dip Powder</strong><span class="desc">Strong, natural-looking finish</span></div><span class="price">$45</span></li></ul></div>
+<div class="menu-group reveal"><h3>Pedicures <span class="tag">Example</span></h3><ul><li><div><strong>Classic Pedicure</strong><span class="desc">Soak, scrub, massage, polish</span></div><span class="price">$35</span></li><li><div><strong>Gel Pedicure</strong><span class="desc">Classic pedicure with gel polish</span></div><span class="price">$50</span></li><li><div><strong>Deluxe Spa Pedicure</strong><span class="desc">Extra massage, mask and hot towels</span></div><span class="price">$60</span></li></ul></div>
+<div class="menu-group reveal"><h3>Enhancements <span class="tag">Example</span></h3><ul><li><div><strong>Full Set Acrylic</strong><span class="desc">Any shape and length</span></div><span class="price">$55</span></li><li><div><strong>Fill</strong><span class="desc">Keep your set looking fresh</span></div><span class="price">$40</span></li><li><div><strong>Nail Art</strong><span class="desc">Designs, chrome, gems</span></div><span class="price">from $5</span></li></ul></div></div>
     </div>
   </section>
 
@@ -172,9 +191,9 @@ dialog.flow::backdrop { background: rgba(20, 16, 18, .55); }
     <div class="wrap">
       <h2>What people say</h2>
       <p class="section-intro">4.5 stars from 150 reviews on Google.</p>
-      <div class="reviews"><figure class="review"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><blockquote>They were incredibly kind and welcoming and got us in and out in record time. … So impressive and such a fun experience. 10/10 and will come again!</blockquote><figcaption>Google review · 4 weeks ago</figcaption></figure>
-<figure class="review"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><blockquote>Vivian is the best! She is so patient and sweet and anytime I feel like experimenting with my nails she is always down to try something new! 10/10 would recommend 🥰</blockquote><figcaption>Google review · 6 months ago</figcaption></figure>
-<figure class="review"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><blockquote>Brayden was attentive to my requests and did a great job fixing a botched manicure and making my nails look exactly how I wanted! Highly recommend.</blockquote><figcaption>Google review · 3 months ago</figcaption></figure></div>
+      <div class="reviews"><figure class="review reveal"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><blockquote>They were incredibly kind and welcoming and got us in and out in record time. … So impressive and such a fun experience. 10/10 and will come again!</blockquote><figcaption>Google review · 4 weeks ago</figcaption></figure>
+<figure class="review reveal"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><blockquote>Vivian is the best! She is so patient and sweet and anytime I feel like experimenting with my nails she is always down to try something new! 10/10 would recommend 🥰</blockquote><figcaption>Google review · 6 months ago</figcaption></figure>
+<figure class="review reveal"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><blockquote>Brayden was attentive to my requests and did a great job fixing a botched manicure and making my nails look exactly how I wanted! Highly recommend.</blockquote><figcaption>Google review · 3 months ago</figcaption></figure></div>
     </div>
   </section>
 
@@ -222,6 +241,12 @@ const KIND = "book";
 const ITEMS = [{"name": "Gel Manicure", "detail": "45 min", "price": "$40"}, {"name": "Dip Powder", "detail": "50 min", "price": "$45"}, {"name": "Gel Pedicure", "detail": "60 min", "price": "$50"}, {"name": "Full Set Acrylic", "detail": "75 min", "price": "$55"}, {"name": "Mani + Pedi Combo", "detail": "90 min", "price": "$70"}];
 const HOURS = ["Monday: 9:30\u202fAM\u2009\u2013\u20097:00\u202fPM", "Tuesday: 9:30\u202fAM\u2009\u2013\u20097:00\u202fPM", "Wednesday: 9:30\u202fAM\u2009\u2013\u20097:00\u202fPM", "Thursday: 9:30\u202fAM\u2009\u2013\u20097:00\u202fPM", "Friday: 9:30\u202fAM\u2009\u2013\u20097:00\u202fPM", "Saturday: 9:30\u202fAM\u2009\u2013\u20097:00\u202fPM", "Sunday: 10:00\u202fAM\u2009\u2013\u20095:00\u202fPM"];
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+// Fade cards and photos in as they scroll into view
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+} else document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
 
 // Highlight today's hours
 const todayName = DAYS[new Date().getDay()];
